@@ -1,6 +1,8 @@
-import cv2
-import pytesseract
+import cv2  # computer vision; lets you analyze an image
+import pytesseract # detect a qr code
 from dataclasses import dataclass
+
+boundaries = [[(1, 2), (3, 4)]]
 
 @dataclass
 class QRCodeData:

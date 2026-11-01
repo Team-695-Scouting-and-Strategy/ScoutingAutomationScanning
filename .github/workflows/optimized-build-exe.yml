@@ -39,6 +39,7 @@ jobs:
         --company-name="Team 695" `
         --output-dir=dist `
         --output-filename=ScoutingApp.exe `
+        --product-version=0.0.1 `
         app.py
 
     - name: Upload Artifact

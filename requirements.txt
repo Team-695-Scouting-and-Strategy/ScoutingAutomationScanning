@@ -6,6 +6,4 @@ numpy==2.5.4
 opencv-python==5.0.0.93
 packaging==26.3
 plotly==7.1.0
-pyinstaller==6.22.3
-pyinstaller-hooks-contrib==2026.9
 setuptools==84.2.1

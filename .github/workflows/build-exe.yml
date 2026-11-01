@@ -34,6 +34,7 @@ jobs:
         --msvc=latest `
         --enable-plugin=tk-inter `
         --include-package-data=customtkinter `
+        --assume-yes-for-downloads `
         --product-name="Scouting App" `
         --company-name="Team 695" `
         --output-dir=dist `

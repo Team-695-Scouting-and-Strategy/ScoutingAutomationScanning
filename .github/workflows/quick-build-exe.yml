@@ -1,5 +1,5 @@
-name: Build and Release Python EXE
-description: This workflow quickly builds a Python EXE using Nuitka and releases it on GitHub. Use this workflow for quick builds, as Nuitka is slower than PyInstaller and may not work with all dependencies. For optimzed production builds, use the optimized-build-exe workflow.
+name: Build and Release Quick Pyinstaller Python EXE
+description: This workflow quickly builds a Python EXE using pyinstaller and releases on github. Use this workflow for testing and development, as it is faster than the optimized-build-exe workflow, but the build will be slower and larger.
 
 on:
   workflow_dispatch:

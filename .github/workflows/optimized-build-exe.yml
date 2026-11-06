@@ -1,4 +1,4 @@
-name: Build and Release Python EXE
+name: \[Production\] Build and Release Optimized Nuitka Python EXE
 description: Builds optimized Python EXE using Nuitka and releases it on GitHub; Use only for final releases, as Nuitka is slower than PyInstaller and may not work with all dependencies. For quick builds, use the quick-build-exe workflow.
 
 on:

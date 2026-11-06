@@ -1,4 +1,5 @@
 name: Build and Release Python EXE
+description: This workflow quickly builds a Python EXE using Nuitka and releases it on GitHub. Use this workflow for quick builds, as Nuitka is slower than PyInstaller and may not work with all dependencies. For optimzed production builds, use the optimized-build-exe workflow.
 
 on:
   workflow_dispatch:
@@ -17,28 +18,17 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.14' # previously used 3.12, but 3.14 is latest stable nuitka compatible version
+        python-version: '3.12'
         cache: 'pip'
 
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install nuitka
+        pip install pyinstaller
         if (Test-Path requirements.txt) { pip install -r requirements.txt }
 
-    - name: Build Executable with Nuitka
-      run: |
-        python -m nuitka `
-        --onefile `
-        --windows-console-mode=disable `
-        --msvc=latest `
-        --enable-plugin=tk-inter `
-        --include-package-data=customtkinter `
-        --product-name="Scouting App" `
-        --company-name="Team 695" `
-        --output-dir=dist `
-        --output-filename=ScoutingApp.exe `
-        app.py
+    - name: Build Executable with PyInstaller
+      run: pyinstaller --onefile --clean --noconsole --collect-all customtkinter --name ScoutingApp app.py
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4

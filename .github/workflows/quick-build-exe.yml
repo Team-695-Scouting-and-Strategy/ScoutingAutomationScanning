@@ -1,4 +1,4 @@
-name: Build and Release Quick Pyinstaller Python EXE
+name: (TESTING) Build and Release Quick Pyinstaller Python EXE
 description: This workflow quickly builds a Python EXE using pyinstaller and releases on github. Use this workflow for testing and development, as it is faster than the optimized-build-exe workflow, but the build will be slower and larger.
 
 on:

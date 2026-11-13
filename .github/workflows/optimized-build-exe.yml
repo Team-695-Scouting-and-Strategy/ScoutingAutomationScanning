@@ -1,0 +1,58 @@
+name: (PRODUCTION) Build and Release Optimized Nuitka Python EXE
+description: Builds optimized Python EXE using Nuitka and releases it on GitHub; Use only for final releases, as Nuitka is slower than PyInstaller and may not work with all dependencies. For quick builds, use the quick-build-exe workflow.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.14' # previously used 3.12, but 3.14 is latest stable nuitka compatible version
+        cache: 'pip'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install nuitka
+        if (Test-Path requirements.txt) { pip install -r requirements.txt }
+
+    - name: Build Executable with Nuitka
+      run: |
+        python -m nuitka `
+        --onefile `
+        --windows-console-mode=disable `
+        --msvc=latest `
+        --enable-plugin=tk-inter `
+        --include-package-data=customtkinter `
+        --assume-yes-for-downloads `
+        --product-name="Scouting App" `
+        --company-name="Team 695" `
+        --output-dir=dist `
+        --output-filename=ScoutingApp.exe `
+        --product-version=0.0.1 `
+        app.py
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-executable
+        path: dist/ScoutingApp.exe
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: dist/ScoutingApp.exe
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

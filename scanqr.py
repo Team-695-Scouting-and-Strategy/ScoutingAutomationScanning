@@ -20,4 +20,3 @@ qr_text, points, _ = detector.detectAndDecode(image)
 data = QRCodeData(qr_text)
 
 print("QR contents:", data.qr_text)
-    

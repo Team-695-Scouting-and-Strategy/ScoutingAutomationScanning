@@ -1,8 +1,8 @@
 import customtkinter as ctk
 
 
-class SettingsPage(ctk.CTkFrame):
-    def __init__(self, parent, controller):
+class SettingsView(ctk.CTkFrame):
+    def __init__(self, parent):
         super().__init__(parent, fg_color="transparent")
 
         ctk.CTkLabel(
@@ -17,5 +17,5 @@ class SettingsPage(ctk.CTkFrame):
             values=["System", "Light", "Dark"],
             command=ctk.set_appearance_mode,
         )
-        self.appearance.set("Dark")
+        self.appearance.set(ctk.get_appearance_mode())
         self.appearance.pack(anchor="w")

@@ -1,9 +1,9 @@
 import customtkinter as ctk
 
-class AnalyticsPage(ctk.CTkFrame):
-    def __init__(self, parent, controller):
+class AnalyticsView(ctk.CTkFrame):
+    def __init__(self, parent):
         super().__init__(parent, fg_color="transparent")
-        self.controller = controller
+        self.controller = None
 
         self.heading = ctk.CTkLabel(
             self,

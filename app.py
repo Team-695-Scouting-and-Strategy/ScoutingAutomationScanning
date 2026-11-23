@@ -1,5 +1,12 @@
 import customtkinter as ctk
-from pages import PAGE_REGISTRY
+
+from database.database import initialize_database
+
+from views import VIEW_REGISTRY
+from views.main_view import MainView
+
+from controllers.dashboard_controller import DashboardController
+from controllers.add_team_controller import AddTeamController
 
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
@@ -9,68 +16,51 @@ class MainApplication(ctk.CTk):
         super().__init__()
         self.title("Scouting App")
         self.geometry("800x500")
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=1)
+        self.main_view = MainView(self, controller=self, view_names=VIEW_REGISTRY)
+        self.main_view.pack(fill="both", expand=True)
 
-        self.sidebar_frame = ctk.CTkFrame(self, width=140, corner_radius=0)
-        self.sidebar_frame.grid(row=0, column=0, sticky="nsew")
-        self.logo_label = ctk.CTkLabel(
-            self.sidebar_frame,
-            text="My App",
-            font=ctk.CTkFont(size=20, weight="bold"),
-        )
-        self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
+        content_frame = self.main_view.content_frame
 
-        self.container = ctk.CTkFrame(self, fg_color="transparent")
-        self.container.grid(row=0, column=1, sticky="nsew", padx=20, pady=20)
-        self.container.grid_rowconfigure(0, weight=1)
-        self.container.grid_columnconfigure(0, weight=1)
+        dashboard_view = VIEW_REGISTRY["Dashboard"](parent=content_frame)
+        self.dashboard_controller = DashboardController(dashboard_view, self)
+        dashboard_view.set_controller(self.dashboard_controller)
 
-        self.frames = {}
-        self.nav_buttons = {}
-        for row, (page_name, page_class) in enumerate(PAGE_REGISTRY.items(), start=1):
-            button_command = (
-                self.open_new_match
-                if page_name == "Add Match"
-                else lambda name=page_name: self.select_frame(name)
-            )
-            button = ctk.CTkButton(
-                self.sidebar_frame,
-                text=page_name,
-                fg_color="transparent",
-                text_color=("gray10", "gray90"),
-                hover_color=("gray70", "gray30"),
-                anchor="w",
-                command=button_command,
-            )
-            button.grid(row=row, column=0, sticky="ew", padx=20, pady=5)
-            self.nav_buttons[page_name] = button
-            self.frames[page_name] = page_class(
-                parent=self.container,
-                controller=self,
-            )
+        add_team_view = VIEW_REGISTRY["Add Team"](parent=content_frame)
+        self.add_team_controller = AddTeamController(add_team_view, self)
+        add_team_view.set_controller(self.add_team_controller)
 
-        self.select_frame(next(iter(PAGE_REGISTRY)))
+        self.frames = {
+            "Dashboard": dashboard_view,
+            "Add Team": add_team_view,
+            "Settings": VIEW_REGISTRY["Settings"](parent=content_frame),
+            "Analytics": VIEW_REGISTRY["Analytics"](parent=content_frame),
+        }
+
+        self.select_frame(next(iter(VIEW_REGISTRY)))
 
     def select_frame(self, name):
-        for page_name, button in self.nav_buttons.items():
-            button.configure(
-                fg_color=("gray70", "gray30") if page_name == name else "transparent"
-            )
+        self.main_view.set_active_view(name)
         frame = self.frames[name]
         frame.grid(row=0, column=0, sticky="nsew")
         frame.tkraise()
         if hasattr(frame, "on_show"):
             frame.on_show()
 
-    def open_new_match(self):
-        self.frames["Add Match"].load_match()
-        self.select_frame("Add Match")
+    def navigate_to(self, name):
+        if name == "Add Team":
+            self.open_add_team()
+        else:
+            self.select_frame(name)
 
-    def edit_match(self, image_path):
-        self.frames["Add Match"].load_match(image_path)
-        self.select_frame("Add Match")
+    def open_add_team(self):
+        self.frames["Add Team"].add_team()
+        self.select_frame("Add Team")
+
+    def open_edit_team(self, team_number):
+        self.frames["Add Team"].edit_team(team_number)
+        self.select_frame("Add Team")
 
 if __name__ == "__main__":
+    initialize_database()
     app = MainApplication()
     app.mainloop()
